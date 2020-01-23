@@ -15,6 +15,7 @@ from keras import backend as K
 from keras.models import load_model
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 try:
@@ -24,7 +25,6 @@ try:
     from PIL import ImageDraw
 except ImportError:
     pil = None
-
 
 # Globals
 _CLASS_INDEX = None
@@ -193,13 +193,17 @@ def stitch_images(images, margin=5, cols=5):
     if len(images) == 0:
         return None
 
-    h, w, c = images[0].shape
+    b_n_w = len(images[0].shape) == 2
+    if not b_n_w:
+        h, w, c = images[0].shape
+    else:
+        h, w = images[0].shape
     n_rows = int(math.ceil(len(images) / cols))
     n_cols = min(len(images), cols)
 
     out_w = n_cols * w + (n_cols - 1) * margin
     out_h = n_rows * h + (n_rows - 1) * margin
-    stitched_images = np.zeros((out_h, out_w, c), dtype=images[0].dtype)
+    stitched_images = np.zeros((out_h, out_w, c), dtype=images[0].dtype) if not b_n_w else np.zeros((out_h, out_w), dtype=images[0].dtype)
 
     for row in range(n_rows):
         for col in range(n_cols):
@@ -208,7 +212,7 @@ def stitch_images(images, margin=5, cols=5):
                 break
 
             stitched_images[(h + margin) * row: (h + margin) * row + h,
-                            (w + margin) * col: (w + margin) * col + w, :] = images[img_idx]
+            (w + margin) * col: (w + margin) * col + w, :] = images[img_idx]
 
     return stitched_images
 
