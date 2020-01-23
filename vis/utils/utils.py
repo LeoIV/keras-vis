@@ -302,7 +302,7 @@ def draw_text(img, text, position=(10, 10), font='FreeSans.ttf', font_size=14, c
         font = ImageFont.truetype(font_files[0], font_size)
 
     # Don't mutate original image
-    b_n_w = len(images[0].squeeze().shape) == 2
+    b_n_w = len(img.squeeze().shape) == 2
     img = Image.fromarray(img.squeeze())
     draw = ImageDraw.Draw(img)
     draw.text(position, text, fill=color if not b_n_w else 0, font=font)
