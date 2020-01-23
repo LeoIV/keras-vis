@@ -193,7 +193,7 @@ def stitch_images(images, margin=5, cols=5):
     if len(images) == 0:
         return None
 
-    b_n_w = len(images[0].shape) == 2
+    b_n_w = len(images[0].squeeze().shape) == 2
     if not b_n_w:
         h, w, c = images[0].shape
     else:
@@ -302,9 +302,10 @@ def draw_text(img, text, position=(10, 10), font='FreeSans.ttf', font_size=14, c
         font = ImageFont.truetype(font_files[0], font_size)
 
     # Don't mutate original image
-    img = Image.fromarray(img)
+    b_n_w = len(images[0].squeeze().shape) == 2
+    img = Image.fromarray(img.squeeze())
     draw = ImageDraw.Draw(img)
-    draw.text(position, text, fill=color, font=font)
+    draw.text(position, text, fill=color if not b_n_w else 0, font=font)
     return np.asarray(img)
 
 
